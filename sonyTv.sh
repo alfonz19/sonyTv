@@ -16,7 +16,7 @@ function invoke() {
 
 function invokeIrcCommand() {
 	invoke IRCC \
-		'<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:X_SendIRCC xmlns:u="urn:schemas-sony-com:service:IRCC:1"><IRCCCode>AAAAAgAAABoAAAB8Aw==</IRCCCode></u:X_SendIRCC></s:Body></s:Envelope>' \
+		"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><u:X_SendIRCC xmlns:u=\"urn:schemas-sony-com:service:IRCC:1\"><IRCCCode>$1</IRCCCode></u:X_SendIRCC></s:Body></s:Envelope>" \
 		--header "Connection: Keep-Alive" --header 'SOAPACTION: "urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"' --header "Content-Type: text/xml; charset=UTF-8"
 #	curl "http://192.168.1.99/sony/IRCC" --header "Connection: Keep-Alive" --header 'SOAPACTION: "urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"' --header "Content-Type: text/xml; charset=UTF-8" --header "X-Auth-PSK: pass" --data-binary '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:X_SendIRCC xmlns:u="urn:schemas-sony-com:service:IRCC:1"><IRCCCode>AAAAAgAAABoAAAB8Aw==</IRCCCode></u:X_SendIRCC></s:Body></s:Envelope>'
 }
@@ -617,7 +617,7 @@ selection=$(irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. | awk '{
 
 if [[ -n "${selection}" ]]; then 
 	cmd=$(irqCommandsJson | jq -r ".[${selection}].value")
-	#invokeIrcCommand $cmd
+	invokeIrcCommand $cmd
 	#echo $cmd
 fi
 
