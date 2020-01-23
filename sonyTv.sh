@@ -2,6 +2,12 @@
 
 URL=http://192.168.1.99/sony
 PASS=pass
+if [[ "${1}" = "-m" ]];then 
+	MULTI=true;
+else
+	MULTI=false;
+
+fi
 
 function invoke() {
 #	echo "invoking: $1 || $2"
@@ -613,12 +619,18 @@ cat<<EOF
 EOF
 }
 
-selection=$(irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. | awk '{print $1}')
+if [[ "${MULTI}" = true ]]; then
+	irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. --bind "enter:execute$ echo {} | sed \"s/^ *\([0-9]*\).*/\1/\" >>/tmp/test$"
+else
 
-if [[ -n "${selection}" ]]; then 
-	cmd=$(irqCommandsJson | jq -r ".[${selection}].value")
-	invokeIrcCommand $cmd
-	#echo $cmd
+	selection=$(irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. | awk '{print $1}')
+
+	if [[ -n "${selection}" ]]; then 
+		cmd=$(irqCommandsJson | jq -r ".[${selection}].value")
+		invokeIrcCommand $cmd
+		#echo $cmd
+	else 
+		echo "cancelled."	
+	fi
+
 fi
-
-
