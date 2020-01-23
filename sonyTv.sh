@@ -614,7 +614,11 @@ EOF
 }
 
 selection=$(irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. | awk '{print $1}')
-cmd=$(irqCommandsJson | jq -r ".[${selection}].value")
 
-invokeIrcCommand $cmd
-#echo $cmd
+if [[ -n "${selection}" ]]; then 
+	cmd=$(irqCommandsJson | jq -r ".[${selection}].value")
+	#invokeIrcCommand $cmd
+	#echo $cmd
+fi
+
+
