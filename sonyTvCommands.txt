@@ -1,0 +1,53 @@
+documentation: https://pro-bravia.sony.net/develop/integrate/rest-api/spec/service/system/v1_0/setPowerStatus/index.html
+
+#power off, resp. set the tv to power saving mode; it's not possible to turn tv on this way.
+curl -X POST http://192.168.1.99/sony/system --data-binary '{"method":"setPowerStatus","id":55,"params":[{"status": false}],"version":"1.0"}' --header "X-Auth-PSK: pass"
+
+#get power status
+curl -X POST http://192.168.1.99/sony/system --data-binary '{"method":"getPowerStatus","id":50,"params":[],"version":"1.0"}' --header "X-Auth-PSK: pass"
+{"result":[{"status":"standby"}],"id":50}
+
+
+#get application list
+echo '{"method":"getApplicationList","id":60,"params":[],"version":"1.0"}' | ./launchOnSony.sh appControl | jq . | less
+
+#run seznam app, uri of seznam app was obtained using application list
+echo '{"method":"setActiveApp","id":601,"params":[{"uri":"com.sony.dtv.com.stream.cz.app.com.stream.cz.app.MainActivity"}],"version":"1.0"}' | ./launchOnSony.sh appControl
+
+#run youtube
+echo '{"method":"setActiveApp","id":601,"params":[{"uri":"com.sony.dtv.com.google.android.youtube.tv.com.google.android.apps.youtube.tv.activity.ShellActivity"}],"version":"1.0"}' | ./launchOnSony.sh appControl
+
+
+
+#if some external source is used to play stuff (tested on hdmi's, not on streaming) this will return info which one. If just some app like youtube is playing, it returns error
+echo '{"method":"getPlayingContentInfo","id":103,"params":[],"version":"1.0"}' | ./launchOnSony.sh avContent
+
+#set mute, true/false
+echo '{"method":"setAudioMute","id":601,"params":[{"status":true}],"version":"1.0"}' | ./launchOnSony.sh audio
+
+#get volume information; get's the volume and mute value. 
+echo '{"method":"getVolumeInformation","id":33,"params":[],"version":"1.0"}' | ./launchOnSony.sh audio
+
+#get list of sources, which can send av data input to the tv.
+echo '{"method":"getContentList","id":88,"params":[{"stIdx":0,"cnt":50,"uri":"extInput:hdmi"}],"version":"1.5"}' | ./launchOnSony.sh avContent | jq . | less
+
+#switch to selected input source:
+echo '{"method":"setPlayContent","id":101,"params":[{"uri":"extInput:hdmi?port=2"}],"version":"1.0"}' | ./launchOnSony.sh avContent
+
+
+#terminate all apps
+echo '{"method":"terminateApps","id":55,"params":[],"version":"1.0"}' | ./launchOnSony.sh appControl
+
+#request reboot
+echo '{"method":"requestReboot","id":10,"params":[],"version":"1.0"}' | ./launchOnSony.sh system
+
+#list of all irq commands
+echo '{"method":"getRemoteControllerInfo","id":54,"params":[],"version":"1.0"}' | ./launchOnSony.sh system | jq
+
+
+
+
+
+#use IRCC commands
+curl "http://192.168.1.99/sony/IRCC" --header "Connection: Keep-Alive" --header 'SOAPACTION: "urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"' --header "Content-Type: text/xml; charset=UTF-8" --header "X-Auth-PSK: pass" --data-binary '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:X_SendIRCC xmlns:u="urn:schemas-sony-com:service:IRCC:1"><IRCCCode>AAAAAgAAABoAAAB8Aw==</IRCCCode></u:X_SendIRCC></s:Body></s:Envelope>' -s > /dev/null
+

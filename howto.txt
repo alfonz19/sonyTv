@@ -1,0 +1,24 @@
+#getAllSupportedIrqCommand
+echo '{"method":"getRemoteControllerInfo","id":54,"params":[],"version":"1.0"}' | ./launchOnSony.sh system | jq . > commands.json
+
+#filter out bullshit
+cat commands.json | jq .result[1]  > data.json
+
+#well I cannot do this regex in shell, so this will do in idea. Open data.json and replace all using following pattern and replacement:
+(?<=^ *"value": ")(.*)"
+",\n"curl": "curl \\"http://192.168.1.99/sony/IRCC\\" --header \\"Connection: Keep-Alive\\" --header \'SOAPACTION: \\"urn:schemas-sony-com:service:IRCC:1#X_SendIRCC\\"\' --header \\"Content-Type: text/xml; charset=UTF-8\\" --header \\"X-Auth-PSK: pass\\" --data-binary \'\<s:Envelope xmlns:s=\\"http://schemas.xmlsoap.org/soap/envelope/\\" s:encodingStyle=\\"http://schemas.xmlsoap.org/soap/encoding/\\"\>\<s:Body\>\<u:X_SendIRCC xmlns:u=\\"urn:schemas-sony-com:service:IRCC:1\\"\>\<IRCCCode\>$1\</IRCCCode\>\</u:X_SendIRCC\>\</s:Body\>\</s:Envelope\>\' -s \> /dev/null"
+
+#note: very crazy replacement, idea tends to hang up. Just wait for a minute or two.
+
+———
+
+
+#next. One can then launch commands like this:
+cat data.json | jq -r '.[] | select (.name=="YouTube") | .curl' | bash
+
+
+
+#so for single entry one can use:
+cat data.json | jq -r .[$(cat data.json | jq .[].name | nl -v 0| fzf --with-nth 2.. | awk '{print $1}')].curl | bash
+
+#for multiple entries one has to use variant of: fzf --bind "enter:execute(open {})"
