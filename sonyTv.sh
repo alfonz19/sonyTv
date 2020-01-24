@@ -44,6 +44,27 @@ function setInput() {
 	invoke "avContent" "{\"method\":\"setPlayContent\",\"id\":101,\"params\":[{\"uri\":\"extInput:hdmi?port=${1}\"}],\"version\":\"1.0\"}"
 }
 
+function autocomplete() {
+	autocomplateFunction=_${1}_autocomplete
+cat<<EOF
+function ${autocomplateFunction}() {
+	local cur="\${COMP_WORDS[COMP_CWORD]}"
+	local prev="\${COMP_WORDS[COMP_CWORD-1]}"
+
+	#something like index of word being autocompleted, counting from 1, and IIUC 1 is the name of command, ie, first param is 2
+	local index="\${#COMP_WORDS[@]}"
+	local first="\${COMP_WORDS[0]}"
+
+	#echo \$index \$first \$cur \$prev \$COMP_CWORD done >> /tmp/debug
+	if [[ \$index -eq 2 ]]; then
+		COMPREPLY=( \$(compgen -W "irq-multi irq list-irq-data getInputUrls getInputNameToUrlMapping getInputNames getInputs setInput" -- \${cur}) )
+	fi
+}
+
+complete -F ${autocomplateFunction} ${1}
+EOF
+}
+
 #to regenerate: echo '{"method":"getRemoteControllerInfo","id":54,"params":[],"version":"1.0"}' | ./doc/launchOnSony.sh system | jq -c .result[1] | jq '. - map(. | select (.name | contains("Partner")) ) - map(. | select (.name | test("Num\\d")) )' | jq '.[] += {"type": "irq"}' | jq > /tmp/abc 
 function irqCommandsJson() {
 cat<<EOF
@@ -674,6 +695,9 @@ function runCommand() {
 			;;
 		irq-multi)
 				irqCommandsJson | jq .[].name | fzf --bind "enter:execute( ${THIS_SCRIPT} execute-irq {} )"
+			;;	
+		autocomplete)
+			autocomplete ${1-sonyTv}
 			;;	
 
 		*)
