@@ -23,6 +23,27 @@ function invokeIrcCommand() {
 		--header "Connection: Keep-Alive" --header 'SOAPACTION: "urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"' --header "Content-Type: text/xml; charset=UTF-8"
 }
 
+function getInputNames() {
+        invoke "avContent" '{"method":"getContentList","id":88,"params":[{"stIdx":0,"cnt":50,"uri":"extInput:hdmi"}],"version":"1.5"}' | jq .result[][].title
+}
+
+function getInputs() {
+        invoke "avContent" '{"method":"getContentList","id":88,"params":[{"stIdx":0,"cnt":50,"uri":"extInput:hdmi"}],"version":"1.5"}' 
+}
+
+function getInputUrls() {
+        invoke "avContent" '{"method":"getContentList","id":88,"params":[{"stIdx":0,"cnt":50,"uri":"extInput:hdmi"}],"version":"1.5"}' | jq .result[][].uri
+}
+
+function getInputNameToUrlMapping() {
+        invoke "avContent" '{"method":"getContentList","id":88,"params":[{"stIdx":0,"cnt":50,"uri":"extInput:hdmi"}],"version":"1.5"}' | jq ".result[][] | .title + \" —>\" + .uri "
+}
+
+function setInput() {
+#	echo here1: $1
+	invoke "avContent" "{\"method\":\"setPlayContent\",\"id\":101,\"params\":[{\"uri\":\"extInput:hdmi?port=${1}\"}],\"version\":\"1.0\"}"
+}
+
 #to regenerate: echo '{"method":"getRemoteControllerInfo","id":54,"params":[],"version":"1.0"}' | ~/launchOnSony.sh system | jq -c .result[1] | jq > /tmp/abc
 function irqCommandsJson() {
 cat<<EOF
@@ -625,27 +646,27 @@ function runCommand() {
 	local command="${1}"
 	shift
 	case "${command}" in
-#		setInput)
-#			if [[ $# -eq 0 ]]; then
-#				echo -e "\tmissing input specification"
-#				help
-#				exit 1
-#			fi
-#			setInput "${1}"
-#			shift
-#			;;	
-#		getInputs)
-#			getInputs
-#			;;	
-#		getInputNames)
-#			getInputNames
-#			;;	
-#		getInputNameToUrlMapping)
-#			getInputNameToUrlMapping
-#			;;	
-#		getInputUrls)
-#			getInputUrls
-#			;;	
+		setInput)
+			if [[ $# -eq 0 ]]; then
+				echo -e "\tmissing input specification"
+				help
+				exit 1
+			fi
+			setInput "${1}"
+			shift
+			;;	
+		getInputs)
+			getInputs
+			;;	
+		getInputNames)
+			getInputNames
+			;;	
+		getInputNameToUrlMapping)
+			getInputNameToUrlMapping
+			;;	
+		getInputUrls)
+			getInputUrls
+			;;	
 
 		execute-irq) 			
 			cmd=$(irqCommandsJson | jq -r ".[] | select (.name==\"${1//\"/}\") | .value")
