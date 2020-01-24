@@ -13,8 +13,8 @@ function invoke() {
 	local data="$2"
 
 	shift 2
-echo $data
-	curl -v -X POST "${URL}/${word}" --header "X-Auth-PSK: ${PASS}" --data-binary "${data}" "$@"
+
+	curl -s "${URL}/${word}" --header "X-Auth-PSK: ${PASS}" --data-binary "${data}" "$@" >/dev/null
 }
 
 function invokeIrcCommand() {
