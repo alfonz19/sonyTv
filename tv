@@ -44,6 +44,10 @@ function setInput() {
 	invoke "avContent" "{\"method\":\"setPlayContent\",\"id\":101,\"params\":[{\"uri\":\"extInput:hdmi?port=${1}\"}],\"version\":\"1.0\"}"
 }
 
+#add following to .bashrc:
+#
+##sonyTv autocompletion
+#[ -f /home/mmucha/Dropbox/skripty/bashScripts/tv ] && source <(/home/mmucha/Dropbox/skripty/bashScripts/tv autocomplete tv)
 function autocomplete() {
 	autocomplateFunction=_${1}_autocomplete
 cat<<EOF
