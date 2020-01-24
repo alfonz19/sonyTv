@@ -44,593 +44,579 @@ function setInput() {
 	invoke "avContent" "{\"method\":\"setPlayContent\",\"id\":101,\"params\":[{\"uri\":\"extInput:hdmi?port=${1}\"}],\"version\":\"1.0\"}"
 }
 
-#to regenerate: echo '{"method":"getRemoteControllerInfo","id":54,"params":[],"version":"1.0"}' | ~/launchOnSony.sh system | jq -c .result[1] | jq > /tmp/abc
+#to regenerate: echo '{"method":"getRemoteControllerInfo","id":54,"params":[],"version":"1.0"}' | ./doc/launchOnSony.sh system | jq -c .result[1] | jq '. - map(. | select (.name | contains("Partner")) ) - map(. | select (.name | test("Num\\d")) )' | jq '.[] += {"type": "irq"}' | jq > /tmp/abc 
 function irqCommandsJson() {
 cat<<EOF
 [
   {
-    "name": "Num1",
-    "value": "AAAAAQAAAAEAAAAAAw=="
-  },
-  {
-    "name": "Num2",
-    "value": "AAAAAQAAAAEAAAABAw=="
-  },
-  {
-    "name": "Num3",
-    "value": "AAAAAQAAAAEAAAACAw=="
-  },
-  {
-    "name": "Num4",
-    "value": "AAAAAQAAAAEAAAADAw=="
-  },
-  {
-    "name": "Num5",
-    "value": "AAAAAQAAAAEAAAAEAw=="
-  },
-  {
-    "name": "Num6",
-    "value": "AAAAAQAAAAEAAAAFAw=="
-  },
-  {
-    "name": "Num7",
-    "value": "AAAAAQAAAAEAAAAGAw=="
-  },
-  {
-    "name": "Num8",
-    "value": "AAAAAQAAAAEAAAAHAw=="
-  },
-  {
-    "name": "Num9",
-    "value": "AAAAAQAAAAEAAAAIAw=="
-  },
-  {
-    "name": "Num0",
-    "value": "AAAAAQAAAAEAAAAJAw=="
-  },
-  {
-    "name": "Num11",
-    "value": "AAAAAQAAAAEAAAAKAw=="
-  },
-  {
-    "name": "Num12",
-    "value": "AAAAAQAAAAEAAAALAw=="
-  },
-  {
     "name": "Enter",
-    "value": "AAAAAQAAAAEAAAALAw=="
+    "value": "AAAAAQAAAAEAAAALAw==",
+    "type": "irq"
   },
   {
     "name": "GGuide",
-    "value": "AAAAAQAAAAEAAAAOAw=="
+    "value": "AAAAAQAAAAEAAAAOAw==",
+    "type": "irq"
   },
   {
     "name": "ChannelUp",
-    "value": "AAAAAQAAAAEAAAAQAw=="
+    "value": "AAAAAQAAAAEAAAAQAw==",
+    "type": "irq"
   },
   {
     "name": "ChannelDown",
-    "value": "AAAAAQAAAAEAAAARAw=="
+    "value": "AAAAAQAAAAEAAAARAw==",
+    "type": "irq"
   },
   {
     "name": "VolumeUp",
-    "value": "AAAAAQAAAAEAAAASAw=="
+    "value": "AAAAAQAAAAEAAAASAw==",
+    "type": "irq"
   },
   {
     "name": "VolumeDown",
-    "value": "AAAAAQAAAAEAAAATAw=="
+    "value": "AAAAAQAAAAEAAAATAw==",
+    "type": "irq"
   },
   {
     "name": "Mute",
-    "value": "AAAAAQAAAAEAAAAUAw=="
+    "value": "AAAAAQAAAAEAAAAUAw==",
+    "type": "irq"
   },
   {
     "name": "TvPower",
-    "value": "AAAAAQAAAAEAAAAVAw=="
+    "value": "AAAAAQAAAAEAAAAVAw==",
+    "type": "irq"
   },
   {
     "name": "Audio",
-    "value": "AAAAAQAAAAEAAAAXAw=="
+    "value": "AAAAAQAAAAEAAAAXAw==",
+    "type": "irq"
   },
   {
     "name": "MediaAudioTrack",
-    "value": "AAAAAQAAAAEAAAAXAw=="
+    "value": "AAAAAQAAAAEAAAAXAw==",
+    "type": "irq"
   },
   {
     "name": "Tv",
-    "value": "AAAAAQAAAAEAAAAkAw=="
+    "value": "AAAAAQAAAAEAAAAkAw==",
+    "type": "irq"
   },
   {
     "name": "Input",
-    "value": "AAAAAQAAAAEAAAAlAw=="
+    "value": "AAAAAQAAAAEAAAAlAw==",
+    "type": "irq"
   },
   {
     "name": "TvInput",
-    "value": "AAAAAQAAAAEAAAAlAw=="
+    "value": "AAAAAQAAAAEAAAAlAw==",
+    "type": "irq"
   },
   {
     "name": "TvAntennaCable",
-    "value": "AAAAAQAAAAEAAAAqAw=="
+    "value": "AAAAAQAAAAEAAAAqAw==",
+    "type": "irq"
   },
   {
     "name": "WakeUp",
-    "value": "AAAAAQAAAAEAAAAuAw=="
+    "value": "AAAAAQAAAAEAAAAuAw==",
+    "type": "irq"
   },
   {
     "name": "PowerOff",
-    "value": "AAAAAQAAAAEAAAAvAw=="
+    "value": "AAAAAQAAAAEAAAAvAw==",
+    "type": "irq"
   },
   {
     "name": "Sleep",
-    "value": "AAAAAQAAAAEAAAAvAw=="
+    "value": "AAAAAQAAAAEAAAAvAw==",
+    "type": "irq"
   },
   {
     "name": "Right",
-    "value": "AAAAAQAAAAEAAAAzAw=="
+    "value": "AAAAAQAAAAEAAAAzAw==",
+    "type": "irq"
   },
   {
     "name": "Left",
-    "value": "AAAAAQAAAAEAAAA0Aw=="
+    "value": "AAAAAQAAAAEAAAA0Aw==",
+    "type": "irq"
   },
   {
     "name": "SleepTimer",
-    "value": "AAAAAQAAAAEAAAA2Aw=="
+    "value": "AAAAAQAAAAEAAAA2Aw==",
+    "type": "irq"
   },
   {
     "name": "Analog2",
-    "value": "AAAAAQAAAAEAAAA4Aw=="
+    "value": "AAAAAQAAAAEAAAA4Aw==",
+    "type": "irq"
   },
   {
     "name": "TvAnalog",
-    "value": "AAAAAQAAAAEAAAA4Aw=="
+    "value": "AAAAAQAAAAEAAAA4Aw==",
+    "type": "irq"
   },
   {
     "name": "Display",
-    "value": "AAAAAQAAAAEAAAA6Aw=="
+    "value": "AAAAAQAAAAEAAAA6Aw==",
+    "type": "irq"
   },
   {
     "name": "Jump",
-    "value": "AAAAAQAAAAEAAAA7Aw=="
+    "value": "AAAAAQAAAAEAAAA7Aw==",
+    "type": "irq"
   },
   {
     "name": "PicOff",
-    "value": "AAAAAQAAAAEAAAA+Aw=="
+    "value": "AAAAAQAAAAEAAAA+Aw==",
+    "type": "irq"
   },
   {
     "name": "PictureOff",
-    "value": "AAAAAQAAAAEAAAA+Aw=="
+    "value": "AAAAAQAAAAEAAAA+Aw==",
+    "type": "irq"
   },
   {
     "name": "Teletext",
-    "value": "AAAAAQAAAAEAAAA/Aw=="
+    "value": "AAAAAQAAAAEAAAA/Aw==",
+    "type": "irq"
   },
   {
     "name": "Video1",
-    "value": "AAAAAQAAAAEAAABAAw=="
+    "value": "AAAAAQAAAAEAAABAAw==",
+    "type": "irq"
   },
   {
     "name": "Video2",
-    "value": "AAAAAQAAAAEAAABBAw=="
+    "value": "AAAAAQAAAAEAAABBAw==",
+    "type": "irq"
   },
   {
     "name": "AnalogRgb1",
-    "value": "AAAAAQAAAAEAAABDAw=="
+    "value": "AAAAAQAAAAEAAABDAw==",
+    "type": "irq"
   },
   {
     "name": "Home",
-    "value": "AAAAAQAAAAEAAABgAw=="
+    "value": "AAAAAQAAAAEAAABgAw==",
+    "type": "irq"
   },
   {
     "name": "Exit",
-    "value": "AAAAAQAAAAEAAABjAw=="
+    "value": "AAAAAQAAAAEAAABjAw==",
+    "type": "irq"
   },
   {
     "name": "PictureMode",
-    "value": "AAAAAQAAAAEAAABkAw=="
+    "value": "AAAAAQAAAAEAAABkAw==",
+    "type": "irq"
   },
   {
     "name": "Confirm",
-    "value": "AAAAAQAAAAEAAABlAw=="
+    "value": "AAAAAQAAAAEAAABlAw==",
+    "type": "irq"
   },
   {
     "name": "Up",
-    "value": "AAAAAQAAAAEAAAB0Aw=="
+    "value": "AAAAAQAAAAEAAAB0Aw==",
+    "type": "irq"
   },
   {
     "name": "Down",
-    "value": "AAAAAQAAAAEAAAB1Aw=="
+    "value": "AAAAAQAAAAEAAAB1Aw==",
+    "type": "irq"
   },
   {
     "name": "ClosedCaption",
-    "value": "AAAAAgAAAKQAAAAQAw=="
+    "value": "AAAAAgAAAKQAAAAQAw==",
+    "type": "irq"
   },
   {
     "name": "Component1",
-    "value": "AAAAAgAAAKQAAAA2Aw=="
+    "value": "AAAAAgAAAKQAAAA2Aw==",
+    "type": "irq"
   },
   {
     "name": "Component2",
-    "value": "AAAAAgAAAKQAAAA3Aw=="
+    "value": "AAAAAgAAAKQAAAA3Aw==",
+    "type": "irq"
   },
   {
     "name": "Wide",
-    "value": "AAAAAgAAAKQAAAA9Aw=="
+    "value": "AAAAAgAAAKQAAAA9Aw==",
+    "type": "irq"
   },
   {
     "name": "EPG",
-    "value": "AAAAAgAAAKQAAABbAw=="
+    "value": "AAAAAgAAAKQAAABbAw==",
+    "type": "irq"
   },
   {
     "name": "PAP",
-    "value": "AAAAAgAAAKQAAAB3Aw=="
+    "value": "AAAAAgAAAKQAAAB3Aw==",
+    "type": "irq"
   },
   {
     "name": "TenKey",
-    "value": "AAAAAgAAAJcAAAAMAw=="
+    "value": "AAAAAgAAAJcAAAAMAw==",
+    "type": "irq"
   },
   {
     "name": "BSCS",
-    "value": "AAAAAgAAAJcAAAAQAw=="
+    "value": "AAAAAgAAAJcAAAAQAw==",
+    "type": "irq"
   },
   {
     "name": "Ddata",
-    "value": "AAAAAgAAAJcAAAAVAw=="
+    "value": "AAAAAgAAAJcAAAAVAw==",
+    "type": "irq"
   },
   {
     "name": "Stop",
-    "value": "AAAAAgAAAJcAAAAYAw=="
+    "value": "AAAAAgAAAJcAAAAYAw==",
+    "type": "irq"
   },
   {
     "name": "Pause",
-    "value": "AAAAAgAAAJcAAAAZAw=="
+    "value": "AAAAAgAAAJcAAAAZAw==",
+    "type": "irq"
   },
   {
     "name": "Play",
-    "value": "AAAAAgAAAJcAAAAaAw=="
+    "value": "AAAAAgAAAJcAAAAaAw==",
+    "type": "irq"
   },
   {
     "name": "Rewind",
-    "value": "AAAAAgAAAJcAAAAbAw=="
+    "value": "AAAAAgAAAJcAAAAbAw==",
+    "type": "irq"
   },
   {
     "name": "Forward",
-    "value": "AAAAAgAAAJcAAAAcAw=="
+    "value": "AAAAAgAAAJcAAAAcAw==",
+    "type": "irq"
   },
   {
     "name": "DOT",
-    "value": "AAAAAgAAAJcAAAAdAw=="
+    "value": "AAAAAgAAAJcAAAAdAw==",
+    "type": "irq"
   },
   {
     "name": "Rec",
-    "value": "AAAAAgAAAJcAAAAgAw=="
+    "value": "AAAAAgAAAJcAAAAgAw==",
+    "type": "irq"
   },
   {
     "name": "Return",
-    "value": "AAAAAgAAAJcAAAAjAw=="
+    "value": "AAAAAgAAAJcAAAAjAw==",
+    "type": "irq"
   },
   {
     "name": "Blue",
-    "value": "AAAAAgAAAJcAAAAkAw=="
+    "value": "AAAAAgAAAJcAAAAkAw==",
+    "type": "irq"
   },
   {
     "name": "Red",
-    "value": "AAAAAgAAAJcAAAAlAw=="
+    "value": "AAAAAgAAAJcAAAAlAw==",
+    "type": "irq"
   },
   {
     "name": "Green",
-    "value": "AAAAAgAAAJcAAAAmAw=="
+    "value": "AAAAAgAAAJcAAAAmAw==",
+    "type": "irq"
   },
   {
     "name": "Yellow",
-    "value": "AAAAAgAAAJcAAAAnAw=="
+    "value": "AAAAAgAAAJcAAAAnAw==",
+    "type": "irq"
   },
   {
     "name": "SubTitle",
-    "value": "AAAAAgAAAJcAAAAoAw=="
+    "value": "AAAAAgAAAJcAAAAoAw==",
+    "type": "irq"
   },
   {
     "name": "CS",
-    "value": "AAAAAgAAAJcAAAArAw=="
+    "value": "AAAAAgAAAJcAAAArAw==",
+    "type": "irq"
   },
   {
     "name": "BS",
-    "value": "AAAAAgAAAJcAAAAsAw=="
+    "value": "AAAAAgAAAJcAAAAsAw==",
+    "type": "irq"
   },
   {
     "name": "Digital",
-    "value": "AAAAAgAAAJcAAAAyAw=="
+    "value": "AAAAAgAAAJcAAAAyAw==",
+    "type": "irq"
   },
   {
     "name": "Options",
-    "value": "AAAAAgAAAJcAAAA2Aw=="
+    "value": "AAAAAgAAAJcAAAA2Aw==",
+    "type": "irq"
   },
   {
     "name": "Media",
-    "value": "AAAAAgAAAJcAAAA4Aw=="
+    "value": "AAAAAgAAAJcAAAA4Aw==",
+    "type": "irq"
   },
   {
     "name": "Prev",
-    "value": "AAAAAgAAAJcAAAA8Aw=="
+    "value": "AAAAAgAAAJcAAAA8Aw==",
+    "type": "irq"
   },
   {
     "name": "Next",
-    "value": "AAAAAgAAAJcAAAA9Aw=="
+    "value": "AAAAAgAAAJcAAAA9Aw==",
+    "type": "irq"
   },
   {
     "name": "DpadCenter",
-    "value": "AAAAAgAAAJcAAABKAw=="
+    "value": "AAAAAgAAAJcAAABKAw==",
+    "type": "irq"
   },
   {
     "name": "CursorUp",
-    "value": "AAAAAgAAAJcAAABPAw=="
+    "value": "AAAAAgAAAJcAAABPAw==",
+    "type": "irq"
   },
   {
     "name": "CursorDown",
-    "value": "AAAAAgAAAJcAAABQAw=="
+    "value": "AAAAAgAAAJcAAABQAw==",
+    "type": "irq"
   },
   {
     "name": "CursorLeft",
-    "value": "AAAAAgAAAJcAAABNAw=="
+    "value": "AAAAAgAAAJcAAABNAw==",
+    "type": "irq"
   },
   {
     "name": "CursorRight",
-    "value": "AAAAAgAAAJcAAABOAw=="
+    "value": "AAAAAgAAAJcAAABOAw==",
+    "type": "irq"
   },
   {
     "name": "ShopRemoteControlForcedDynamic",
-    "value": "AAAAAgAAAJcAAABqAw=="
+    "value": "AAAAAgAAAJcAAABqAw==",
+    "type": "irq"
   },
   {
     "name": "FlashPlus",
-    "value": "AAAAAgAAAJcAAAB4Aw=="
+    "value": "AAAAAgAAAJcAAAB4Aw==",
+    "type": "irq"
   },
   {
     "name": "FlashMinus",
-    "value": "AAAAAgAAAJcAAAB5Aw=="
+    "value": "AAAAAgAAAJcAAAB5Aw==",
+    "type": "irq"
   },
   {
     "name": "DemoMode",
-    "value": "AAAAAgAAAJcAAAB8Aw=="
+    "value": "AAAAAgAAAJcAAAB8Aw==",
+    "type": "irq"
   },
   {
     "name": "Analog",
-    "value": "AAAAAgAAAHcAAAANAw=="
+    "value": "AAAAAgAAAHcAAAANAw==",
+    "type": "irq"
   },
   {
     "name": "Mode3D",
-    "value": "AAAAAgAAAHcAAABNAw=="
+    "value": "AAAAAgAAAHcAAABNAw==",
+    "type": "irq"
   },
   {
     "name": "DigitalToggle",
-    "value": "AAAAAgAAAHcAAABSAw=="
+    "value": "AAAAAgAAAHcAAABSAw==",
+    "type": "irq"
   },
   {
     "name": "DemoSurround",
-    "value": "AAAAAgAAAHcAAAB7Aw=="
+    "value": "AAAAAgAAAHcAAAB7Aw==",
+    "type": "irq"
   },
   {
     "name": "*AD",
-    "value": "AAAAAgAAABoAAAA7Aw=="
+    "value": "AAAAAgAAABoAAAA7Aw==",
+    "type": "irq"
   },
   {
     "name": "AudioMixUp",
-    "value": "AAAAAgAAABoAAAA8Aw=="
+    "value": "AAAAAgAAABoAAAA8Aw==",
+    "type": "irq"
   },
   {
     "name": "AudioMixDown",
-    "value": "AAAAAgAAABoAAAA9Aw=="
+    "value": "AAAAAgAAABoAAAA9Aw==",
+    "type": "irq"
   },
   {
     "name": "PhotoFrame",
-    "value": "AAAAAgAAABoAAABVAw=="
+    "value": "AAAAAgAAABoAAABVAw==",
+    "type": "irq"
   },
   {
     "name": "Tv_Radio",
-    "value": "AAAAAgAAABoAAABXAw=="
+    "value": "AAAAAgAAABoAAABXAw==",
+    "type": "irq"
   },
   {
     "name": "SyncMenu",
-    "value": "AAAAAgAAABoAAABYAw=="
+    "value": "AAAAAgAAABoAAABYAw==",
+    "type": "irq"
   },
   {
     "name": "Hdmi1",
-    "value": "AAAAAgAAABoAAABaAw=="
+    "value": "AAAAAgAAABoAAABaAw==",
+    "type": "irq"
   },
   {
     "name": "Hdmi2",
-    "value": "AAAAAgAAABoAAABbAw=="
+    "value": "AAAAAgAAABoAAABbAw==",
+    "type": "irq"
   },
   {
     "name": "Hdmi3",
-    "value": "AAAAAgAAABoAAABcAw=="
+    "value": "AAAAAgAAABoAAABcAw==",
+    "type": "irq"
   },
   {
     "name": "Hdmi4",
-    "value": "AAAAAgAAABoAAABdAw=="
+    "value": "AAAAAgAAABoAAABdAw==",
+    "type": "irq"
   },
   {
     "name": "TopMenu",
-    "value": "AAAAAgAAABoAAABgAw=="
+    "value": "AAAAAgAAABoAAABgAw==",
+    "type": "irq"
   },
   {
     "name": "PopUpMenu",
-    "value": "AAAAAgAAABoAAABhAw=="
+    "value": "AAAAAgAAABoAAABhAw==",
+    "type": "irq"
   },
   {
     "name": "OneTouchTimeRec",
-    "value": "AAAAAgAAABoAAABkAw=="
+    "value": "AAAAAgAAABoAAABkAw==",
+    "type": "irq"
   },
   {
     "name": "OneTouchView",
-    "value": "AAAAAgAAABoAAABlAw=="
+    "value": "AAAAAgAAABoAAABlAw==",
+    "type": "irq"
   },
   {
     "name": "DUX",
-    "value": "AAAAAgAAABoAAABzAw=="
+    "value": "AAAAAgAAABoAAABzAw==",
+    "type": "irq"
   },
   {
     "name": "FootballMode",
-    "value": "AAAAAgAAABoAAAB2Aw=="
+    "value": "AAAAAgAAABoAAAB2Aw==",
+    "type": "irq"
   },
   {
     "name": "iManual",
-    "value": "AAAAAgAAABoAAAB7Aw=="
+    "value": "AAAAAgAAABoAAAB7Aw==",
+    "type": "irq"
   },
   {
     "name": "Netflix",
-    "value": "AAAAAgAAABoAAAB8Aw=="
+    "value": "AAAAAgAAABoAAAB8Aw==",
+    "type": "irq"
   },
   {
     "name": "Assists",
-    "value": "AAAAAgAAAMQAAAA7Aw=="
+    "value": "AAAAAgAAAMQAAAA7Aw==",
+    "type": "irq"
   },
   {
     "name": "FeaturedApp",
-    "value": "AAAAAgAAAMQAAABEAw=="
+    "value": "AAAAAgAAAMQAAABEAw==",
+    "type": "irq"
   },
   {
     "name": "FeaturedAppVOD",
-    "value": "AAAAAgAAAMQAAABFAw=="
+    "value": "AAAAAgAAAMQAAABFAw==",
+    "type": "irq"
   },
   {
     "name": "GooglePlay",
-    "value": "AAAAAgAAAMQAAABGAw=="
+    "value": "AAAAAgAAAMQAAABGAw==",
+    "type": "irq"
   },
   {
     "name": "ActionMenu",
-    "value": "AAAAAgAAAMQAAABLAw=="
+    "value": "AAAAAgAAAMQAAABLAw==",
+    "type": "irq"
   },
   {
     "name": "Help",
-    "value": "AAAAAgAAAMQAAABNAw=="
+    "value": "AAAAAgAAAMQAAABNAw==",
+    "type": "irq"
   },
   {
     "name": "TvSatellite",
-    "value": "AAAAAgAAAMQAAABOAw=="
+    "value": "AAAAAgAAAMQAAABOAw==",
+    "type": "irq"
   },
   {
     "name": "WirelessSubwoofer",
-    "value": "AAAAAgAAAMQAAAB+Aw=="
+    "value": "AAAAAgAAAMQAAAB+Aw==",
+    "type": "irq"
   },
   {
     "name": "AndroidMenu",
-    "value": "AAAAAgAAAMQAAABPAw=="
+    "value": "AAAAAgAAAMQAAABPAw==",
+    "type": "irq"
   },
   {
     "name": "RecorderMenu",
-    "value": "AAAAAgAAAMQAAABIAw=="
+    "value": "AAAAAgAAAMQAAABIAw==",
+    "type": "irq"
   },
   {
     "name": "STBMenu",
-    "value": "AAAAAgAAAMQAAABJAw=="
+    "value": "AAAAAgAAAMQAAABJAw==",
+    "type": "irq"
   },
   {
     "name": "MuteOn",
-    "value": "AAAAAgAAAMQAAAAsAw=="
+    "value": "AAAAAgAAAMQAAAAsAw==",
+    "type": "irq"
   },
   {
     "name": "MuteOff",
-    "value": "AAAAAgAAAMQAAAAtAw=="
+    "value": "AAAAAgAAAMQAAAAtAw==",
+    "type": "irq"
   },
   {
     "name": "AudioOutput_AudioSystem",
-    "value": "AAAAAgAAAMQAAAAiAw=="
+    "value": "AAAAAgAAAMQAAAAiAw==",
+    "type": "irq"
   },
   {
     "name": "AudioOutput_TVSpeaker",
-    "value": "AAAAAgAAAMQAAAAjAw=="
+    "value": "AAAAAgAAAMQAAAAjAw==",
+    "type": "irq"
   },
   {
     "name": "AudioOutput_Toggle",
-    "value": "AAAAAgAAAMQAAAAkAw=="
+    "value": "AAAAAgAAAMQAAAAkAw==",
+    "type": "irq"
   },
   {
     "name": "ApplicationLauncher",
-    "value": "AAAAAgAAAMQAAAAqAw=="
+    "value": "AAAAAgAAAMQAAAAqAw==",
+    "type": "irq"
   },
   {
     "name": "YouTube",
-    "value": "AAAAAgAAAMQAAABHAw=="
-  },
-  {
-    "name": "PartnerApp1",
-    "value": "AAAAAgAACB8AAAAAAw=="
-  },
-  {
-    "name": "PartnerApp2",
-    "value": "AAAAAgAACB8AAAABAw=="
-  },
-  {
-    "name": "PartnerApp3",
-    "value": "AAAAAgAACB8AAAACAw=="
-  },
-  {
-    "name": "PartnerApp4",
-    "value": "AAAAAgAACB8AAAADAw=="
-  },
-  {
-    "name": "PartnerApp5",
-    "value": "AAAAAgAACB8AAAAEAw=="
-  },
-  {
-    "name": "PartnerApp6",
-    "value": "AAAAAgAACB8AAAAFAw=="
-  },
-  {
-    "name": "PartnerApp7",
-    "value": "AAAAAgAACB8AAAAGAw=="
-  },
-  {
-    "name": "PartnerApp8",
-    "value": "AAAAAgAACB8AAAAHAw=="
-  },
-  {
-    "name": "PartnerApp9",
-    "value": "AAAAAgAACB8AAAAIAw=="
-  },
-  {
-    "name": "PartnerApp10",
-    "value": "AAAAAgAACB8AAAAJAw=="
-  },
-  {
-    "name": "PartnerApp11",
-    "value": "AAAAAgAACB8AAAAKAw=="
-  },
-  {
-    "name": "PartnerApp12",
-    "value": "AAAAAgAACB8AAAALAw=="
-  },
-  {
-    "name": "PartnerApp13",
-    "value": "AAAAAgAACB8AAAAMAw=="
-  },
-  {
-    "name": "PartnerApp14",
-    "value": "AAAAAgAACB8AAAANAw=="
-  },
-  {
-    "name": "PartnerApp15",
-    "value": "AAAAAgAACB8AAAAOAw=="
-  },
-  {
-    "name": "PartnerApp16",
-    "value": "AAAAAgAACB8AAAAPAw=="
-  },
-  {
-    "name": "PartnerApp17",
-    "value": "AAAAAgAACB8AAAAQAw=="
-  },
-  {
-    "name": "PartnerApp18",
-    "value": "AAAAAgAACB8AAAARAw=="
-  },
-  {
-    "name": "PartnerApp19",
-    "value": "AAAAAgAACB8AAAASAw=="
-  },
-  {
-    "name": "PartnerApp20",
-    "value": "AAAAAgAACB8AAAATAw=="
+    "value": "AAAAAgAAAMQAAABHAw==",
+    "type": "irq"
   }
 ]
 EOF
