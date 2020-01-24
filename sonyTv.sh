@@ -1,13 +1,10 @@
 #!/bin/bash
 
-URL=http://192.168.1.99/sony
-PASS=pass
-if [[ "${1}" = "-m" ]];then 
-	MULTI=true;
-else
-	MULTI=false;
-
-fi
+function help() {
+cat<<EOF
+        Not OK, man!
+EOF
+}
 
 function invoke() {
 #	echo "invoking: $1 || $2"
@@ -16,7 +13,7 @@ function invoke() {
 	local data="$2"
 
 	shift 2
-
+echo $data
 	curl -v -X POST "${URL}/${word}" --header "X-Auth-PSK: ${PASS}" --data-binary "${data}" "$@"
 }
 
@@ -24,7 +21,6 @@ function invokeIrcCommand() {
 	invoke IRCC \
 		"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><u:X_SendIRCC xmlns:u=\"urn:schemas-sony-com:service:IRCC:1\"><IRCCCode>$1</IRCCCode></u:X_SendIRCC></s:Body></s:Envelope>" \
 		--header "Connection: Keep-Alive" --header 'SOAPACTION: "urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"' --header "Content-Type: text/xml; charset=UTF-8"
-#	curl "http://192.168.1.99/sony/IRCC" --header "Connection: Keep-Alive" --header 'SOAPACTION: "urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"' --header "Content-Type: text/xml; charset=UTF-8" --header "X-Auth-PSK: pass" --data-binary '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><u:X_SendIRCC xmlns:u="urn:schemas-sony-com:service:IRCC:1"><IRCCCode>AAAAAgAAABoAAAB8Aw==</IRCCCode></u:X_SendIRCC></s:Body></s:Envelope>'
 }
 
 #to regenerate: echo '{"method":"getRemoteControllerInfo","id":54,"params":[],"version":"1.0"}' | ~/launchOnSony.sh system | jq -c .result[1] | jq > /tmp/abc
@@ -619,18 +615,110 @@ cat<<EOF
 EOF
 }
 
-if [[ "${MULTI}" = true ]]; then
-	irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. --bind "enter:execute$ echo {} | sed \"s/^ *\([0-9]*\).*/\1/\" >>/tmp/test$"
-else
-
-	selection=$(irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. | awk '{print $1}')
-
-	if [[ -n "${selection}" ]]; then 
-		cmd=$(irqCommandsJson | jq -r ".[${selection}].value")
-		invokeIrcCommand $cmd
-		#echo $cmd
-	else 
-		echo "cancelled."	
+function runCommand() {
+	if [[ $# -eq 0 ]]; then 
+		echo -e "\tmissing command specification!"
+		help
+		exit 1
 	fi
 
-fi
+	local command="${1}"
+	shift
+	case "${command}" in
+#		test)
+#			echo $1
+#			echo $2
+#			;;	
+
+
+
+#		setInput)
+#			if [[ $# -eq 0 ]]; then
+#				echo -e "\tmissing input specification"
+#				help
+#				exit 1
+#			fi
+#			setInput "${1}"
+#			shift
+#			;;	
+#		getInputs)
+#			getInputs
+#			;;	
+#		getInputNames)
+#			getInputNames
+#			;;	
+#		getInputNameToUrlMapping)
+#			getInputNameToUrlMapping
+#			;;	
+#		getInputUrls)
+#			getInputUrls
+#			;;	
+
+		execute-irq) 			
+#			echo executing irq $1
+			cmd=$(irqCommandsJson | jq -r ".[] | select (.name==\"${1//\"/}\") | .value")
+#			echo $cmd
+			invokeIrcCommand ${cmd}
+			;;
+		list-irq-data)
+			irqCommandsJson
+			;;
+		irq)
+				selection=$(irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. | awk '{print $1}')
+				if [[ -n "${selection}" ]]; then 
+					cmd=$(irqCommandsJson | jq -r ".[${selection}].value")
+					invokeIrcCommand $cmd
+					#echo $cmd
+				else 
+					echo "cancelled."	
+				fi
+
+			;;
+		irq-multi)
+#				irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. --bind "enter:execute( $scr test)"
+				irqCommandsJson | jq .[].name | fzf --bind "enter:execute( ${THIS_SCRIPT} execute-irq {} )"
+#				irqCommandsJson | jq .[].name | fzf --bind "enter:execute( echo {} )"
+			;;	
+
+		*)
+			echo -e "\tunknown command!"
+			help
+			exit 1
+			;;
+	esac
+	
+}
+
+#———————————————————————————— MAIN ————————————————————————————————————————
+
+
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+THIS_SCRIPT="${SCRIPTPATH}/$(basename ${0})"
+URL=http://192.168.1.99/sony
+PASS=pass
+
+
+runCommand "$@" 
+
+
+#if [[ "${1}" = "-m" ]]; then 
+#	MULTI=true;
+#else
+#	MULTI=false;
+#fi
+
+#if [[ "${1}" = "test" ]]; then
+#	echo yeah >> /tmp/test
+#	exit
+#fi
+
+
+
+
+#if [[ "${MULTI}" = true ]]; then
+#	#irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. --bind "enter:execute$ echo {} | sed \"s/^ *\([0-9]*\).*/\1/\" >>/tmp/test$"
+#	irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. --bind "enter:execute( $scr test)"
+#else
+#
+#
+#fi
