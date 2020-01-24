@@ -625,13 +625,6 @@ function runCommand() {
 	local command="${1}"
 	shift
 	case "${command}" in
-#		test)
-#			echo $1
-#			echo $2
-#			;;	
-
-
-
 #		setInput)
 #			if [[ $# -eq 0 ]]; then
 #				echo -e "\tmissing input specification"
@@ -655,9 +648,7 @@ function runCommand() {
 #			;;	
 
 		execute-irq) 			
-#			echo executing irq $1
 			cmd=$(irqCommandsJson | jq -r ".[] | select (.name==\"${1//\"/}\") | .value")
-#			echo $cmd
 			invokeIrcCommand ${cmd}
 			;;
 		list-irq-data)
@@ -675,9 +666,7 @@ function runCommand() {
 
 			;;
 		irq-multi)
-#				irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. --bind "enter:execute( $scr test)"
 				irqCommandsJson | jq .[].name | fzf --bind "enter:execute( ${THIS_SCRIPT} execute-irq {} )"
-#				irqCommandsJson | jq .[].name | fzf --bind "enter:execute( echo {} )"
 			;;	
 
 		*)
@@ -700,25 +689,3 @@ PASS=pass
 
 runCommand "$@" 
 
-
-#if [[ "${1}" = "-m" ]]; then 
-#	MULTI=true;
-#else
-#	MULTI=false;
-#fi
-
-#if [[ "${1}" = "test" ]]; then
-#	echo yeah >> /tmp/test
-#	exit
-#fi
-
-
-
-
-#if [[ "${MULTI}" = true ]]; then
-#	#irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. --bind "enter:execute$ echo {} | sed \"s/^ *\([0-9]*\).*/\1/\" >>/tmp/test$"
-#	irqCommandsJson | jq .[].name | nl -v 0| fzf --with-nth 2.. --bind "enter:execute( $scr test)"
-#else
-#
-#
-#fi
