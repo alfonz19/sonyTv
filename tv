@@ -61,7 +61,7 @@ function ${autocomplateFunction}() {
 
 	#echo \$index \$first \$cur \$prev \$COMP_CWORD done >> /tmp/debug
 	if [[ \$index -eq 2 ]]; then
-		COMPREPLY=( \$(compgen -W "irq-multi irq list-irq-data getInputUrls getInputNameToUrlMapping getInputNames getInputs setInput" -- \${cur}) )
+		COMPREPLY=( \$(compgen -W "multi-irq irq list-irq-data getInputUrls getInputNameToUrlMapping getInputNames getInputs setInput" -- \${cur}) )
 	fi
 }
 
@@ -697,7 +697,7 @@ function runCommand() {
 				fi
 
 			;;
-		irq-multi)
+		multi-irq)
 				irqCommandsJson | jq .[].name | fzf --bind "enter:execute( ${THIS_SCRIPT} execute-irq {} )"
 			;;	
 		autocomplete)
