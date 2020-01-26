@@ -741,7 +741,7 @@ function runCommand() {
 
 			;;
 		multi-irq)
-				irqCommandsJson | jq .[].name | fzf --bind "enter:execute( ${THIS_SCRIPT} execute-irq {} )"
+				irqCommandsJson | jq .[].name | fzf --bind "enter:execute-silent( ${THIS_SCRIPT} execute-irq {} )"
 			;;	
 		autocomplete)
 			autocomplete ${1-sonyTv}
