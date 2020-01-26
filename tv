@@ -94,17 +94,17 @@ def construct(s):
 
 
 construct(inputs | parse | select(.) | {(.key):.value})
-| map( {pid: .["application.process.id"],
-        index,
-        appname: .["application.name"],
-        medianame: .["media.name"]} )
+| map((.index|tostring)+" "+.["application.name"]+"(media=\""+.["media.name"]+"\", pid="+.["application.process.id"]+")")
+| .[]
 
 EOF
 }
 
 
 function changeAudioSink() {
-	pactl list sink-inputs | jq -nR -f <(jqListAudioSinksTemplate)
+	sinks=$(pacmd list-sink-inputs | jq -nRr -f <(jqListAudioSinksTemplate) | fzf -m --with-nth 2.. --bind ctrl-a:select-all,ctrl-d:deselect-all,ctrl-t:toggle-all | awk '{print $1}' )
+	target=$(pacmd list-sinks | grep "index\|name:" | tr -d "\n" | sed "s/\* *index: \([0-9]*\)/index: \1(*)/;s/ *index: \([0-9]*\)/\1/g;s/[ \t]*name: <\([^>]*\)>/\t\1\n/g" | fzf | sed "s/^\([0-9]*\).*/\1/")
+	echo "${sinks}" | xargs -I '{}' pacmd move-sink-input {} "${target}"
 }
 
 #to regenerate: echo '{"method":"getRemoteControllerInfo","id":54,"params":[],"version":"1.0"}' | ./doc/launchOnSony.sh system | jq -c .result[1] | jq '. - map(. | select (.name | contains("Partner")) ) - map(. | select (.name | test("Num\\d")) )' | jq '.[] += {"type": "irq"}' | jq > /tmp/abc 
