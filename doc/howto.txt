@@ -22,3 +22,20 @@ cat data.json | jq -r '.[] | select (.name=="YouTube") | .curl' | bash
 cat data.json | jq -r .[$(cat data.json | jq .[].name | nl -v 0| fzf --with-nth 2.. | awk '{print $1}')].curl | bash
 
 #for multiple entries one has to use variant of: fzf --bind "enter:execute(open {})"
+
+
+
+
+#-------------------------------------
+#list sinks in nice parseable way:
+pacmd list-sinks | grep "index\|name:" | tr -d "\n" | sed "s/\* *index: \([0-9]*\)/index: \1(*)/;s/ *index: \([0-9]*\)/\1/g;s/[ \t]*name: <\([^>]*\)>/\t\1\n/g"
+
+
+#list sink input detains as json:
+pacmd list-sink-inputs > /tmp/out
+cat /tmp/out | grep -e "index: \|application.process.id = \|application.name = \|media.name = " |  sed "s/^[ \t]*//;s/ = /: /;s/\"//g" | jq -s -R '[ split("\n")[] | select(length > 0)| split(": ") | {(.[0]|tostring):.[1]}] | add'
+
+cat /tmp/out2 | grep -e "index: \|application.process.id = \|application.name = \|media.name = " |  sed "s/^[ \t]*//;s/ = /: /;s/\"//g" | jq -s -R -r '[ split("\n")[] | select(length > 0)| split(": ") | {(.[0]|tostring):.[1]}] | add | .index+" "+.["application.name"]+"(pid="+.["application.process.id"]+", details=\""+.["media.name"]+"\")"'
+
+at exampleOf2Inputs | grep -e "index: \|application.process.id = \|application.name = \|media.name = " | sed "s/^[ \t]*//;s/^\([^=]*\) = /\1: /" | tr "\n" ";" | sed "s/$/\n/;s/index:/\nindex:/g" | tail -n +2 | while read A; do index=$(echo $A|sed "s/^index: \([0-9]*\).*/\1/"); pid=$(echo $A|sed 's/^.*application\.process\.id: \"\([0-9]*\)\".*$/\1/'); appname=$(echo $A|sed 's/^.*application\.name: \"\([^;]*\)\".*$/\1/'); medianame=$(echo $A|sed 's/^.*media\.name: \"\([^;]*\)\".*$/\"\1\"/'); echo "pid=$pid index=$index appname=$appname medianame=$medianame"; done
+

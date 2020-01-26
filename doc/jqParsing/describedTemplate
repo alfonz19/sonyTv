@@ -1,0 +1,34 @@
+def parse:
+
+
+  #this function will return a) null if called with null b) parsed number if that can be parsed out from it c) string with removed apostrophes if input is string d) else input request.
+  def interpret:
+    #not sure, but probably invariant not to work on null values and return immediately.
+    if . == null then .
+    #else (if not null) and 'it' is a string then ...
+    elif startswith("\"") and endswith("\"")
+    #remove apostrophes from that string.
+    then  .[1:-1]
+    #if it's not a string, try to convert to number (`tonumber`), ignore conversion error (`?`) and in case of error use original object (`.`)
+    else tonumber? // .
+    end;
+  (capture( "(?<key>[^:= ]*)(: | = )(?<value>.*)" ) // null)
+  | if . then .value = (.value | interpret) else . end
+;
+
+# Construct one object for each "segment"  
+def construct(s): 
+  [ foreach (s, 0) as $kv (null;
+      if $kv == 0 or $kv.index
+      then .complete = .accumulator | .accumulator = $kv
+      else .complete = null | .accumulator += $kv
+      end;
+      .complete // empty ) ]
+;
+
+
+construct(inputs | parse | select(.) | {(.key):.value})
+| map( {pid: .["application.process.id"],
+        index,
+        appname: .["application.name"],
+        medianame: .["media.name"]} )
