@@ -61,12 +61,50 @@ function ${autocomplateFunction}() {
 
 	#echo \$index \$first \$cur \$prev \$COMP_CWORD done >> /tmp/debug
 	if [[ \$index -eq 2 ]]; then
-		COMPREPLY=( \$(compgen -W "multi-irq irq list-irq-data getInputUrls getInputNameToUrlMapping getInputNames getInputs setInput" -- \${cur}) )
+		COMPREPLY=( \$(compgen -W "multi-irq irq changeAudioSink changeDefaultAudioSink list-irq-data getInputUrls getInputNameToUrlMapping getInputNames getInputs setInput" -- \${cur}) )
 	fi
 }
 
 complete -F ${autocomplateFunction} ${1}
 EOF
+}
+
+function jqListAudioSinksTemplate() {
+cat<<EOF
+def parse:
+  def interpret:
+    if . == null then .
+    elif startswith("\"") and endswith("\"")
+    then  .[1:-1]
+    else tonumber? // .
+    end;
+  (capture( "[ \t]*(?<key>[^:= ]*)(: | = )(?<value>.*)" ) // null)
+  | if . then .value = (.value | interpret) else . end
+;
+
+# Construct one object for each "segment"  
+def construct(s): 
+  [ foreach (s, 0) as \$kv (null;
+      if \$kv == 0 or \$kv.index
+      then .complete = .accumulator | .accumulator = \$kv
+      else .complete = null | .accumulator += \$kv
+      end;
+      .complete // empty ) ]
+;
+
+
+construct(inputs | parse | select(.) | {(.key):.value})
+| map( {pid: .["application.process.id"],
+        index,
+        appname: .["application.name"],
+        medianame: .["media.name"]} )
+
+EOF
+}
+
+
+function changeAudioSink() {
+	pactl list sink-inputs | jq -nR -f <(jqListAudioSinksTemplate)
 }
 
 #to regenerate: echo '{"method":"getRemoteControllerInfo","id":54,"params":[],"version":"1.0"}' | ./doc/launchOnSony.sh system | jq -c .result[1] | jq '. - map(. | select (.name | contains("Partner")) ) - map(. | select (.name | test("Num\\d")) )' | jq '.[] += {"type": "irq"}' | jq > /tmp/abc 
@@ -677,6 +715,11 @@ function runCommand() {
 			;;	
 		getInputUrls)
 			getInputUrls
+			;;	
+		changeAudioSink)
+			changeAudioSink
+			;;	
+		changeDefaultAudioSink)
 			;;	
 
 		execute-irq) 			
