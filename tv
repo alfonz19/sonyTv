@@ -1,5 +1,15 @@
 #!/bin/bash
 
+bold=$(tput bold)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+underline=$(tput sgr 0 1)
+blue=$(tput setaf 4)
+purple=$(tput setaf 5)
+reset=$(tput sgr0)
+UPLINE=$(tput cuu1)
+ERASELINE=$(tput el)
+
 function help() {
 cat<<EOF
         Not OK, man!
@@ -61,7 +71,7 @@ function ${autocomplateFunction}() {
 
 	#echo \$index \$first \$cur \$prev \$COMP_CWORD done >> /tmp/debug
 	if [[ \$index -eq 2 ]]; then
-		COMPREPLY=( \$(compgen -W "multi-irq irq changeAudioSink changeDefaultAudioSink list-irq-data getInputUrls getInputNameToUrlMapping getInputNames getInputs setInput" -- \${cur}) )
+		COMPREPLY=( \$(compgen -W "multi-irq irq execute-irq keyboardRemote changeAudioSink changeDefaultAudioSink list-irq-data getInputUrls getInputNameToUrlMapping getInputNames getInputs setInput" -- \${cur}) )
 	fi
 }
 
@@ -685,6 +695,196 @@ cat<<EOF
 EOF
 }
 
+function getIrqCode() {
+	irqCommandsJson | jq -r ".[] | select (.name==\"${1//\"/}\") | .value"
+}
+
+#———————————————————————————— remote ——————————————————————————————————————
+
+function draw() {
+cat<<EOF
+Bash remote:
+
+   ${bold}navigation${reset}: arrows           ${bold}HDMI-1${reset}: 1
+   ${bold}confirm/enter${reset}: <ENTER>       ${bold}HDMI-2${reset}: 2
+   ${bold}back${reset}: esc                    ${bold}HDMI-3${reset}: 3
+   ${bold}mute${reset}: m                      ${bold}HDMI-4${reset}: 4
+   ${bold}forward${reset}: "<PgUp>"            ${bold}Home${reset}: h
+   ${bold}rewind${reset}: "<PgDown>"
+   ${bold}exit${reset}: "<Esc>"
+   ${bold}pause${reset}: "<SPACE>"
+   ${bold}volumeUp${reset}: "+"
+   ${bold}volumeDown${reset}: "-"
+   ${bold}tvPower${reset}: "P"
+   ${bold}screenOff${reset}: S                 ${bold}ChangeAppsAudioSink${reset}: A
+   ${bold}youtube${reset}: y                   ${bold}ChangeDefaultAudioSink${reset}: D
+
+   ${bold}quit${reset}: Q
+
+
+Last selection(${SELECTION_INDEX}): ${1}
+EOF
+}
+
+SCREEN_LINES=$(draw | wc -l)
+MAX_LINE_LENGTH=$(( 20 + $(draw|wc -L) ))
+
+function cr() {
+	echo -en "\r";
+}
+
+function eraseLine() {
+	echo -e "${UPLINE}\c"
+}
+
+function eraseAllScreenLines() {
+	for J in $(seq 1 ${SCREEN_LINES}); do eraseLine;done
+	cr
+	#this is character repetition: head -c ${MAX_LINE_LENGTH} < /dev/zero | tr '\0' ' '
+	for J in $(seq 1 ${SCREEN_LINES}); do  head -c ${MAX_LINE_LENGTH} < /dev/zero | tr '\0' ' ';echo;done
+	for J in $(seq 1 ${SCREEN_LINES}); do eraseLine;done
+}
+
+function remoteCommand() {
+    draw "${1}"
+    invokeIrcCommand "${2}"
+
+}
+
+function keyboardRemote() {
+	SELECTION_INDEX=0
+
+	local forward=$(getIrqCode "Forward")
+	local rewind=$(getIrqCode "Rewind")
+	local muteValue=$(getIrqCode "Mute")
+	local up=$(getIrqCode "Up")
+	local down=$(getIrqCode "Down")
+	local left=$(getIrqCode "Left")
+	local right=$(getIrqCode "Right")
+	local exit=$(getIrqCode "Exit")
+	local confirm=$(getIrqCode "Confirm")
+	local pause=$(getIrqCode "Pause")
+	local volumeUp=$(getIrqCode "VolumeUp")
+	local volumeDown=$(getIrqCode "VolumeDown")
+	local tvPower=$(getIrqCode "TvPower")
+	local screenOff=$(getIrqCode "PictureOff")
+	local youtube=$(getIrqCode "YouTube")
+	local hdmi1=$(getIrqCode "Hdmi1")
+	local hdmi2=$(getIrqCode "Hdmi2")
+	local hdmi3=$(getIrqCode "Hdmi3")
+	local hdmi4=$(getIrqCode "Hdmi4")
+	local home=$(getIrqCode "Home")
+
+	#first write screen with no button pressed.
+	draw
+	while true; do
+		 unset K1 K2 K3
+		 read -s -N1 
+		 K1="$REPLY"
+		 read -s -N2 -t 0.001
+		 K2="$REPLY"
+		 read -s -N1 -t 0.001
+		 K3="$REPLY"
+		 key="$K1$K2$K3"
+
+
+		eraseAllScreenLines
+		SELECTION_INDEX=$((${SELECTION_INDEX} + 1));
+
+		case "$key" in
+		#  $'\x1b\x5b\x32\x7e')  # Insert
+		#   echo Insert Key
+		#  ;;
+		#  $'\x1b\x5b\x33\x7e')  # Delete
+		#   echo Delete Key
+		#  ;;
+		#  $'\x1b\x5b\x31\x7e'|$'\x1b\x4f\x48'|$'\x1b\x5b\x48')  # Home_key_num_7
+		#   echo Home Key
+		#  ;;
+		#  $'\x1b\x5b\x34\x7e'|$'\x1b\x4f\x46'|$'\x1b\x5b\x46')  # End_key_num_1
+		#   echo End Key
+		#  ;;
+		  $'\x1b\x5b\x35\x7e')  # Page_Up
+		   remoteCommand Page_Up ${forward}
+		  ;;
+		  $'\x1b\x5b\x36\x7e')  # Page_Down
+		   remoteCommand Page_Down ${rewind}
+		  ;;
+		  $'\x1b\x5b\x41')  # Up_arrow
+    			remoteCommand "Up arrow" ${up}
+		  ;;
+		  $'\x1b\x5b\x42')  # Down_arrow
+		   remoteCommand "Down arrow" ${down}
+		  ;;
+		  $'\x1b\x5b\x43')  # Right_arrow
+		   remoteCommand "Right arrow" ${right}
+		  ;;
+		  $'\x1b\x5b\x44')  # Left_arrow
+		   remoteCommand "Left arrow" ${left}
+		  ;;
+		#  $'\x09')  # Tab
+		#   echo Tab Key
+		#  ;;
+		  $'\x0a')  # Enter
+		   remoteCommand "Enter Key" "${confirm}"
+		  ;;
+		  $'\x1b')  # Escape
+		   remoteCommand "Escape Key" "${exit}"
+		  ;;
+		  $'\x20')  # Space
+		   remoteCommand "Pause" "${pause}"
+		  ;;
+		  Q)
+		#  echo
+		   break;
+		  ;;
+                  +)
+			remoteCommand "volumeUp" "${volumeUp}"
+		  ;;
+                  -)
+			remoteCommand "volumeDown" "${volumeDown}"
+		  ;;
+                  m)
+			remoteCommand "Mute" "${muteValue}"
+		  ;;
+                  P)
+			remoteCommand "TvPower" "${tvPower}"
+		  ;;
+                  y)
+			remoteCommand "Youtube" "${youtube}"
+		  ;;
+                  S)
+			remoteCommand "ScreenOff" "${screenOff}"
+		  ;;
+                  1)
+			remoteCommand "HDMI-1" "${hdmi1}"
+		  ;;
+                  2)
+			remoteCommand "HDMI-2" "${hdmi2}"
+		  ;;
+                  3)
+			remoteCommand "HDMI-3" "${hdmi3}"
+		  ;;
+                  4)
+			remoteCommand "HDMI-4" "${hdmi4}"
+		  ;;
+                  h)
+			remoteCommand "Home" "${home}"
+		  ;;
+                  A)
+			changeAudioSink
+			draw ""
+		  ;;
+                  D)
+			#changeAudioSink
+		  ;;
+		  *)
+		   draw "<Unknown command>"
+		  ;;
+		 esac
+	done
+}
+#//////////////////////////// remote //////////////////////////////////////
 function runCommand() {
 	if [[ $# -eq 0 ]]; then 
 		echo -e "\tmissing command specification!"
@@ -706,6 +906,9 @@ function runCommand() {
 			;;	
 		getInputs)
 			getInputs
+			;;	
+		keyboardRemote)
+			keyboardRemote
 			;;	
 		getInputNames)
 			getInputNames
@@ -755,6 +958,8 @@ function runCommand() {
 	esac
 	
 }
+
+
 
 #———————————————————————————— MAIN ————————————————————————————————————————
 
