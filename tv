@@ -754,26 +754,26 @@ function remoteCommand() {
 function keyboardRemote() {
 	SELECTION_INDEX=0
 
-	local forward=$(getIrqCode "Forward")
-	local rewind=$(getIrqCode "Rewind")
-	local muteValue=$(getIrqCode "Mute")
-	local up=$(getIrqCode "Up")
-	local down=$(getIrqCode "Down")
-	local left=$(getIrqCode "Left")
-	local right=$(getIrqCode "Right")
-	local exit=$(getIrqCode "Exit")
-	local confirm=$(getIrqCode "Confirm")
-	local pause=$(getIrqCode "Pause")
-	local volumeUp=$(getIrqCode "VolumeUp")
-	local volumeDown=$(getIrqCode "VolumeDown")
-	local tvPower=$(getIrqCode "TvPower")
-	local screenOff=$(getIrqCode "PictureOff")
-	local youtube=$(getIrqCode "YouTube")
-	local hdmi1=$(getIrqCode "Hdmi1")
-	local hdmi2=$(getIrqCode "Hdmi2")
-	local hdmi3=$(getIrqCode "Hdmi3")
-	local hdmi4=$(getIrqCode "Hdmi4")
-	local home=$(getIrqCode "Home")
+	local forward="AAAAAgAAAJcAAAAcAw=="
+	local rewind="AAAAAgAAAJcAAAAbAw=="
+	local muteValue="AAAAAQAAAAEAAAAUAw=="
+	local up="AAAAAQAAAAEAAAB0Aw=="
+	local down="AAAAAQAAAAEAAAB1Aw=="
+	local left="AAAAAQAAAAEAAAA0Aw=="
+	local right="AAAAAQAAAAEAAAAzAw=="
+	local exit="AAAAAQAAAAEAAABjAw=="
+	local confirm="AAAAAQAAAAEAAABlAw=="
+	local pause="AAAAAgAAAJcAAAAZAw=="
+	local volumeUp="AAAAAQAAAAEAAAASAw=="
+	local volumeDown="AAAAAQAAAAEAAAATAw=="
+	local tvPower="AAAAAQAAAAEAAAAVAw=="
+	local screenOff="AAAAAQAAAAEAAAA+Aw=="
+	local youtube="AAAAAgAAAMQAAABHAw=="
+	local hdmi1="AAAAAgAAABoAAABaAw=="
+	local hdmi2="AAAAAgAAABoAAABbAw=="
+	local hdmi3="AAAAAgAAABoAAABcAw=="
+	local hdmi4="AAAAAgAAABoAAABdAw=="
+	local home="AAAAAQAAAAEAAABgAw=="
 
 	#first write screen with no button pressed.
 	draw
