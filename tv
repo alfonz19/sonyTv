@@ -887,14 +887,17 @@ function keyboardRemote() {
 #//////////////////////////// remote //////////////////////////////////////
 function runCommand() {
 	if [[ $# -eq 0 ]]; then 
-		echo -e "\tmissing command specification!"
-		help
-		exit 1
+		keyboardRemote
+		exit;
 	fi
 
 	local command="${1}"
 	shift
 	case "${command}" in
+		help)
+			help
+			exit 0
+			;;
 		setInput)
 			if [[ $# -eq 0 ]]; then
 				echo -e "\tmissing input specification"
