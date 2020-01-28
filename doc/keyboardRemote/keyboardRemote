@@ -1,0 +1,124 @@
+#!/bin/bash
+
+bold=$(tput bold)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+underline=$(tput sgr 0 1)
+blue=$(tput setaf 4)
+purple=$(tput setaf 5)
+reset=$(tput sgr0)
+UPLINE=$(tput cuu1)
+ERASELINE=$(tput el)
+
+function draw() {
+cat<<EOF
+Bash remote:
+                                                                               |
+   ${bold}navigation${reset}: arrows
+   ${bold}confirm/enter${reset}: enter
+   ${bold}back${reset}: esc
+
+   ${bold}quit${reset}: Q
+
+
+Last selection(${SELECTION_INDEX}): ${1}
+EOF
+}
+
+SCREEN_LINES=$(draw | wc -l)
+MAX_LINE_LENGTH=$(draw|wc -L)
+#echo "max=${MAX_LINE_LENGTH}"
+#echo "sl=${SCREEN_LINES}"
+function cr() {
+	echo -en "\r";
+}
+
+function eraseLine() {
+	echo -e "${UPLINE}\c"
+}
+
+function eraseAllScreenLines() {
+#	sleep 5s
+	for J in $(seq 1 ${SCREEN_LINES}); do eraseLine;done
+	cr
+#	sleep 5s
+	#this is character repetition: head -c ${MAX_LINE_LENGTH} < /dev/zero | tr '\0' ' '
+	for J in $(seq 1 ${SCREEN_LINES}); do  head -c ${MAX_LINE_LENGTH} < /dev/zero | tr '\0' ' ';echo;done
+#	sleep 5s
+	for J in $(seq 1 ${SCREEN_LINES}); do eraseLine;done
+#	sleep 5s
+}
+
+SELECTION_INDEX=0
+
+
+#first write screen with no button pressed.
+draw
+while true; do
+	 unset K1 K2 K3
+	 read -s -N1 
+	 K1="$REPLY"
+	 read -s -N2 -t 0.001
+	 K2="$REPLY"
+	 read -s -N1 -t 0.001
+	 K3="$REPLY"
+	 key="$K1$K2$K3"
+
+
+	eraseAllScreenLines
+	SELECTION_INDEX=$((${SELECTION_INDEX} + 1));
+
+	case "$key" in
+	#  $'\x1b\x5b\x32\x7e')  # Insert
+	#   echo Insert Key
+	#  ;;
+	#  $'\x1b\x5b\x33\x7e')  # Delete
+	#   echo Delete Key
+	#  ;;
+	#  $'\x1b\x5b\x31\x7e'|$'\x1b\x4f\x48'|$'\x1b\x5b\x48')  # Home_key_num_7
+	#   echo Home Key
+	#  ;;
+	#  $'\x1b\x5b\x34\x7e'|$'\x1b\x4f\x46'|$'\x1b\x5b\x46')  # End_key_num_1
+	#   echo End Key
+	#  ;;
+	#  $'\x1b\x5b\x35\x7e')  # Page_Up
+	#   echo Page_Up
+	#  ;;
+	#  $'\x1b\x5b\x36\x7e')  # Page_Down
+	#   echo Page_Down
+	#  ;;
+	  $'\x1b\x5b\x41')  # Up_arrow
+	   draw "Up arrow"
+	  ;;
+	  $'\x1b\x5b\x42')  # Down_arrow
+	   draw "Down arrow"
+	  ;;
+	  $'\x1b\x5b\x43')  # Right_arrow
+	   draw "Right arrow"
+	  ;;
+	  $'\x1b\x5b\x44')  # Left_arrow
+	   draw "Left arrow"
+	  ;;
+	#  $'\x09')  # Tab
+	#   echo Tab Key
+	#  ;;
+	  $'\x0a')  # Enter
+	   draw "Enter Key"
+	  ;;
+	  $'\x1b')  # Escape
+	   draw "Escape Key"
+	  ;;
+	#  $'\x20')  # Space
+	#   echo Space Key
+	#  ;;
+	   Q)
+	#  echo
+	   break;
+	  ;;
+	  *)
+	   draw "<Unknown command>"
+	  ;;
+	 esac
+done
+#	eraseAllScreenLines
+	echo Bye ...
