@@ -1,0 +1,5 @@
+use this page to figure out values $'\x1b\x5b\x42')
+
+each value like `1b ` is hex for some char
+
+https://www.unicodepedia.com/unicode/basic-latin/46/latin-capital-letter-f/

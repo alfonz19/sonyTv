@@ -1,0 +1,27 @@
+#!/bin/bash
+
+bold=$(tput bold)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+underline=$(tput sgr 0 1)
+blue=$(tput setaf 4)
+purple=$(tput setaf 5)
+reset=$(tput sgr0)
+
+
+IFS=''
+echo -e "Press [ENTER] to start Configuration..."
+for (( i=10; i>0; i--)); do
+
+printf "\rStarting in $i seconds..."
+read -s -N 1 -t 1 key
+
+if [ "$key" = $'\e' ]; then
+        echo -e "\n [ESC] Pressed"
+        break
+elif [ "$key" == $'\x0a' ] ;then
+        echo -e "\n [Enter] Pressed"
+        break
+fi
+
+done

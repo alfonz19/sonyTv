@@ -1,0 +1,44 @@
+#!/bin/bash
+
+bold=$(tput bold)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+underline=$(tput sgr 0 1)
+blue=$(tput setaf 4)
+purple=$(tput setaf 5)
+reset=$(tput sgr0)
+
+
+function rrr() {
+
+escape_char=$(printf "\u1b")
+read -rsn1 mode # get 1 character
+
+#echo "|${blue}(a) ${mode}${reset}|"
+
+if [[ $mode == $escape_char ]]; then
+    read -rsn2 mode # read 2 more chars
+#   echo "|${blue}(b) ${mode}${reset}|"
+fi
+
+
+case $mode in
+    'q') echo QUITTING ; exit ;;
+    '[A') echo UP ;;
+    '[B') echo DN ;;
+    '[D') echo LEFT ;;
+    '[C') echo RIGHT ;;
+    '[H') echo HOME ;;
+    '[F') echo END ;;
+    '[5') echo pgup ;read -rsn1;;
+    '[6') echo pgdown;read -rsn1 ;;
+    '[3') echo delete;read -rsn1 ;;
+    '[2') echo insert;read -rsn1 ;;
+    '') echo enter; ;;
+
+    *) >&2 echo "ERR bad input(${mode})"; return ;;
+esac
+
+}
+
+while true; do rrr; done
