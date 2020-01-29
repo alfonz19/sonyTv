@@ -711,10 +711,10 @@ Bash remote:
    ${bold}mute${reset}: m                      ${bold}HDMI-4${reset}: 4
    ${bold}forward${reset}: "<PgUp>"            ${bold}Home${reset}: h
    ${bold}rewind${reset}: "<PgDown>"
-   ${bold}exit${reset}: "<Esc>"
-   ${bold}pause${reset}: "<SPACE>"
-   ${bold}volumeUp${reset}: "+"
-   ${bold}volumeDown${reset}: "-"
+   ${bold}exit${reset}: "<Esc>"                ${bold}Monitor${reset}: M
+   ${bold}pause${reset}: "<SPACE>"             ${bold}TV${reset}: T
+   ${bold}volumeUp${reset}: "+"                ${bold}Monitor-Tv mirroring${reset}: I
+   ${bold}volumeDown${reset}: "-"              ${bold}Monitor-Tv composition${reset}: B
    ${bold}tvPower${reset}: "P"
    ${bold}screenOff${reset}: S                 ${bold}ChangeAppsAudioSink${reset}: A
    ${bold}youtube${reset}: y                   ${bold}ChangeDefaultAudioSink${reset}: D
@@ -874,6 +874,32 @@ function keyboardRemote() {
                   A)
 			changeAudioSink
 			draw ""
+		  ;;
+                  M)
+			  xrandr --output HDMI-0 --off --output DVI-D-0 --mode 1920x1200 --rate 59.95
+			draw "Use Monitor only"
+		  ;;
+                  T)
+			  xrandr --output HDMI-0 --mode 1920x1080 --rate 60.00 --output DVI-D-0 --off
+			draw "Use TV only"
+		  ;;
+                  I)
+			  guessedNoOfScreens=$(xrandr | grep " connected" | grep -E "[0-9]{3,4}x[0-9]{3,4}" | wc -l)
+			  if [[ ${guessedNoOfScreens} -eq 1 ]]; then
+				  xrandr --output HDMI-0 --auto --scale-from 1920x1200 --output DVI-D-0 --mode 1920x1200 --rate 59.95
+				draw "Use Monitor-TV mirroring"
+			  else
+				  draw "Error: please switch to 1 screen only first"
+			  fi
+		  ;;
+                  B)
+			guessedNoOfScreens=$(xrandr | grep " connected" | grep -E "[0-9]{3,4}x[0-9]{3,4}" | wc -l)
+                          if [[ ${guessedNoOfScreens} -eq 1 ]]; then
+			  	xrandr --output DVI-D-0 --primary --mode 1920x1200 --rate 59.95 --output HDMI-0 --auto --scale-from 1920x1200 --right-of DVI-D-0
+				draw "Use Monitor-TV composition"
+                          else
+                                  draw "Error: please switch to 1 screen only first"
+                          fi
 		  ;;
                   D)
 			#changeAudioSink
