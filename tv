@@ -731,25 +731,6 @@ Last selection(${SELECTION_INDEX}): ${1}
 EOF
 }
 
-SCREEN_LINES=$(draw | wc -l)
-MAX_LINE_LENGTH=$(( 20 + $(draw|wc -L) ))
-
-function cr() {
-	echo -en "\r";
-}
-
-function eraseLine() {
-	echo -e "${UPLINE}\c"
-}
-
-function eraseAllScreenLines() {
-	for J in $(seq 1 ${SCREEN_LINES}); do eraseLine;done
-	cr
-	#this is character repetition: head -c ${MAX_LINE_LENGTH} < /dev/zero | tr '\0' ' '
-	for J in $(seq 1 ${SCREEN_LINES}); do  head -c ${MAX_LINE_LENGTH} < /dev/zero | tr '\0' ' ';echo;done
-	for J in $(seq 1 ${SCREEN_LINES}); do eraseLine;done
-}
-
 function remoteCommand() {
     draw "${1}"
     invokeIrcCommand "${2}"
@@ -757,6 +738,7 @@ function remoteCommand() {
 }
 
 function keyboardRemote() {
+	clear;
 	SELECTION_INDEX=0
 
 	local forward="AAAAAgAAAJcAAAAcAw=="
@@ -792,8 +774,7 @@ function keyboardRemote() {
 		 K3="$REPLY"
 		 key="$K1$K2$K3"
 
-
-		eraseAllScreenLines
+		clear;
 		SELECTION_INDEX=$((${SELECTION_INDEX} + 1));
 
 		case "$key" in
