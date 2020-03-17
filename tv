@@ -891,7 +891,8 @@ function keyboardRemote() {
                   B)
 			guessedNoOfScreens=$(xrandr | grep " connected" | grep -E "[0-9]{3,4}x[0-9]{3,4}" | wc -l)
                           if [[ ${guessedNoOfScreens} -eq 1 ]]; then
-			  	xrandr --output DVI-D-0 --primary --mode 1920x1200 --rate 59.95 --output HDMI-0 --auto --scale-from 1920x1200 --right-of DVI-D-0
+			  	#xrandr --output DVI-D-0 --primary --mode 1920x1200 --rate 59.95 --output HDMI-0 --auto --scale-from 1920x1200 --right-of DVI-D-0
+			  	xrandr --output DVI-D-0 --primary --mode 1920x1200 --rate 59.95 --pos 0x0 --output HDMI-0 --auto --scale-from 1920x1200 --pos 1920x1125
 				draw "Use Monitor-TV composition"
                           else
                                   draw "Error: please switch to 1 screen only first"
