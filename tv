@@ -731,8 +731,10 @@ Bash remote:
    ${bold}volumeUp${reset}: "+"                ${bold}Monitor-Tv mirroring${reset}: I
    ${bold}volumeDown${reset}: "-"              ${bold}Monitor-Tv composition${reset}: B
    ${bold}tvPower${reset}: "P"
+   ${bold}tvOFF${reset}: "T"
    ${bold}screenOff${reset}: S                 ${bold}ChangeAppsAudioSink${reset}: A
    ${bold}youtube${reset}: y                   ${bold}ChangeDefaultAudioSink${reset}: D
+   ${bold}netflix${reset}: n                   ${bold}ChangeDefaultAudioSink${reset}: D
 
    ${bold}quit${reset}: Q
 
@@ -771,6 +773,8 @@ function keyboardRemote() {
 	local hdmi3="AAAAAgAAABoAAABcAw=="
 	local hdmi4="AAAAAgAAABoAAABdAw=="
 	local home="AAAAAQAAAAEAAABgAw=="
+	local tvOff="AAAAAQAAAAEAAAAvAw=="
+	local netflix="AAAAAgAAABoAAAB8Aw=="
 
 	#first write screen with no button pressed.
 	draw
@@ -842,6 +846,12 @@ function keyboardRemote() {
 		  ;;
                   m)
 			remoteCommand "Mute" "${muteValue}"
+		  ;;
+                  n)
+			remoteCommand "Netflix" "${netflix}"
+		  ;;
+                  T)
+			remoteCommand "TvOff" "${tvOff}"
 		  ;;
                   P)
 			remoteCommand "TvPower" "${tvPower}"
