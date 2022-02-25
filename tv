@@ -724,17 +724,17 @@ Bash remote:
    ${bold}confirm/enter${reset}: <ENTER>       ${bold}HDMI-2${reset}: 2
    ${bold}back${reset}: esc                    ${bold}HDMI-3${reset}: 3
    ${bold}mute${reset}: m                      ${bold}HDMI-4${reset}: 4
-   ${bold}forward${reset}: "<PgUp>"            ${bold}Home${reset}: h
+   ${bold}forward${reset}: "<PgUp>"            ${bold}bring window to TV${reset}: w
    ${bold}rewind${reset}: "<PgDown>"
-   ${bold}exit${reset}: "<Esc>"                ${bold}Monitor${reset}: M
-   ${bold}pause${reset}: "<SPACE>"             ${bold}TV${reset}: T
-   ${bold}volumeUp${reset}: "+"                ${bold}Monitor-Tv mirroring${reset}: I
-   ${bold}volumeDown${reset}: "-"              ${bold}Monitor-Tv composition${reset}: B
-   ${bold}tvPower${reset}: "P"
-   ${bold}tvOFF${reset}: "T"
-   ${bold}screenOff${reset}: S                 ${bold}ChangeAppsAudioSink${reset}: A
-   ${bold}youtube${reset}: y                   ${bold}ChangeDefaultAudioSink${reset}: D
-   ${bold}netflix${reset}: n                   ${bold}ChangeDefaultAudioSink${reset}: D
+   ${bold}Home${reset}: h                      ${bold}Monitor${reset}: M  
+   ${bold}exit${reset}: "<Esc>"                ${bold}TV${reset}: T                       
+   ${bold}pause${reset}: "<SPACE>"             ${bold}Monitor-Tv mirroring${reset}: I    
+   ${bold}volumeUp${reset}: "+"                ${bold}Monitor-Tv composition${reset}: B  
+   ${bold}volumeDown${reset}: "-"              
+   ${bold}tvPower${reset}: "P"                 ${bold}toggle TV audio output${reset}: R
+   ${bold}screenOff${reset}: S                 
+   ${bold}youtube${reset}: y                   ${bold}ChangeAppsAudioSink${reset}: A     
+   ${bold}netflix${reset}: n                   ${bold}ChangeDefaultAudioSink${reset}: D  
 
    ${bold}quit${reset}: Q
 
@@ -775,6 +775,7 @@ function keyboardRemote() {
 	local home="AAAAAQAAAAEAAABgAw=="
 	local tvOff="AAAAAQAAAAEAAAAvAw=="
 	local netflix="AAAAAgAAABoAAAB8Aw=="
+	local toggleTvAudioOutput="AAAAAgAAAMQAAAAkAw=="
 
 	#first write screen with no button pressed.
 	draw
@@ -850,9 +851,9 @@ function keyboardRemote() {
                   n)
 			remoteCommand "Netflix" "${netflix}"
 		  ;;
-                  T)
-			remoteCommand "TvOff" "${tvOff}"
-		  ;;
+#                  T)
+#			remoteCommand "TvOff" "${tvOff}"
+#		  ;;
                   P)
 			remoteCommand "TvPower" "${tvPower}"
 		  ;;
@@ -877,10 +878,23 @@ function keyboardRemote() {
                   h)
 			remoteCommand "Home" "${home}"
 		  ;;
+                  R)
+			remoteCommand "Toggle TV audio output" "${toggleTvAudioOutput}"
+		  ;;
                   A)
 			changeAudioSink
 			draw ""
 		  ;;
+	  	  w)
+			  windowID=$(wmctrl -l -p | fzf --with-nth 3..5 | awk '{print $1}')
+			  if [ -n "${windowID}" ]; then
+#				  echo windowId=${windowID}
+				  pos=$(xrandr | grep HDMI | sed "s/^.*+\([0-9]*\)+\([0-9]*\).*/\1,\2/")
+				  wmctrl -i -r "${windowID}" -e 0,${pos},300,300
+				  wmctrl -i -r "${windowID}" -b add,fullscreen,sticky
+			  fi
+			  draw "Moved window to TV"
+	          ;;
                   M)
 			  xrandr --output HDMI-0 --off --output DVI-D-0 --mode 1920x1200 --rate 59.95
 			draw "Use Monitor only"
