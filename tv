@@ -1018,7 +1018,7 @@ function runCommand() {
 
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 THIS_SCRIPT="${SCRIPTPATH}/$(basename ${0})"
-URL=http://192.168.1.99/sony
+URL=http://192.168.1.111/sony
 PASS=pass
 
 
